@@ -17,7 +17,7 @@ dotenv.config({ path: "./config/.env" });
 
 // Middleware CORS
 app.use(cors({
-    origin: "https://englix-client.vercel.app/",
+    origin: "https://englix-client.vercel.app",
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
