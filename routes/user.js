@@ -122,7 +122,7 @@ router.post('/submitresult', async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-        return res.status(404).json({ message: "usertidak ditemukan" })
+        return res.status(404).json({ message: "user tidak ditemukan" })
     }
 
     try {
@@ -133,7 +133,7 @@ router.post('/submitresult', async (req, res) => {
         user.quiz.push({ percoobaan: user.quiz.length + 1, score, quizname })
 
         await user.save()
-        return res.status(200).json({ message: "niali Quiz terekap" })
+        return res.status(200).json({ message: "nilai Quiz tersimpan" })
     } catch (error) {
         console.log(error)
         return res.status(400).json({ message: "terjadi kesalahan saat melakukan submit" })
@@ -148,7 +148,6 @@ router.post('/forgotpassword', async (req, res) => {
         if (!user) {
             return res.status(404).json({ status: false, message: "Akun tidak ditemukan" });
         }
-
 
         const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '10m' });
         var transporter = nodemailer.createTransport({
