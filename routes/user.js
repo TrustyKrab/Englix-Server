@@ -163,7 +163,7 @@ router.post('/forgotpassword', async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Reset Password',
-            text: `https://lutfi-script-client.vercel.app/resetpassword/${token}`
+            text: `https://englix-client.vercel.app/resetpassword/${token}`
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
