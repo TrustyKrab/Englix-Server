@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-dotenv.config();
 import { AdminRouter } from './routes/admin.js';
 import { UserRouter } from './routes/user.js';
 
 
 
+dotenv.config();
 const app = express();
 app.use(express.json());
 
