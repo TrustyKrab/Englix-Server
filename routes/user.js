@@ -4,8 +4,16 @@ import { User } from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer'
+import cors from 'cors';
+import express from 'express';
 
 
+const app = express();
+
+app.use(cors({
+    origin: 'https://englix-client.vercel.app', // Izinkan permintaan dari domain klien Anda
+    credentials: true // Jika Anda menggunakan cookie
+}));
 
 dotenv.config();
 const router = express.Router();
@@ -209,7 +217,7 @@ router.post("/forgot-password", async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: "Reset Password",
-            text: 'https://englix-client.vercel.app/user/reset-password/${token}',
+            text: `https://englix-client.vercel.app/user/reset-password/${token}`,
         };
 
         transporter.sendMail(mailOptions, function (error) {
