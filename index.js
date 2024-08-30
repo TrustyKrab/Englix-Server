@@ -6,9 +6,16 @@ import { AdminRouter } from './routes/admin.js';
 import { UserRouter } from './routes/user.js';
 
 dotenv.config();
-const app = express();
+
+const corsConfig = {
+    origin: "*",
+    credentials: true,
+    method: ["GET", "POST", "PUT", "DELETE"],
+}
+app.use(cors(corsConfig))
 const Cors = require('cors')
 app.use(cors());
+const app = express();
 app.use(express.json());
 
 // Load environment variables from .env file
