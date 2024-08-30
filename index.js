@@ -1,4 +1,3 @@
-
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -8,6 +7,8 @@ import { UserRouter } from './routes/user.js';
 
 dotenv.config();
 const app = express();
+const Cors = require('cors')
+app.use(cors());
 app.use(express.json());
 
 // Load environment variables from .env file
