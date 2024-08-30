@@ -6,13 +6,9 @@ import cookieParser from 'cookie-parser';
 import { AdminRouter } from './routes/admin.js';
 import { UserRouter } from './routes/user.js';
 
-
-
 dotenv.config();
 const app = express();
 app.use(express.json());
-const UserRouter = require('./routes/user.js');
-// Konfigurasi Express dan pemakaian UserRouter
 
 // Load environment variables from .env file
 dotenv.config({ path: "./config/.env" });
@@ -41,9 +37,6 @@ app.use(cookieParser())
 app.use('/admin', AdminRouter)
 app.use('/user', UserRouter)
 app.use('/user/:id', UserRouter)
-
-
-
 
 mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
