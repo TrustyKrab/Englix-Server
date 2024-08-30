@@ -11,6 +11,9 @@ import { UserRouter } from './routes/user.js';
 dotenv.config();
 const app = express();
 app.use(express.json());
+const UserRouter = require('./routes/user.js');
+// Konfigurasi Express dan pemakaian UserRouter
+app.use('/user', UserRouter); // Gunakan UserRouter di aplikasi
 
 // Load environment variables from .env file
 dotenv.config({ path: "./config/.env" });
