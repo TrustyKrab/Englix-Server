@@ -109,7 +109,7 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ status: false, message: "Akun tidak ditemukan" });
+            return res.status(404).json({ status: false, message: "Akun tidak di temukan" });
         }
 
         const validPassword = await bcrypt.compare(password, user.password);
