@@ -145,61 +145,45 @@ router.post('/submitresult', async (req, res) => {
     }
 });
 
-router.post("/forgot-password", validateForgotPassword, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
+router.post('/forgotpassword', async (req, res) => {
     const { email } = req.body;
 
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            console.log("User not found for email:", email);
-            return res.status(400).json({ message: "User tidak ditemukan" });
+            return res.status(404).json({ status: false, message: "Akun tidak ditemukan" });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.KEY, {
-            expiresIn: "10m",
-        });
 
+        const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '10m' });
         var transporter = nodemailer.createTransport({
-            service: "gmail",
+            service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
+                pass: process.env.EMAIL_PASS
+            }
         });
 
         var mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
-            subject: "Reset Password",
-            text: `https://kidslearn-client.vercel.app/reset-password/${token}`,
+            subject: 'Reset Password',
+            text: `https://englix-client.vercel.app/resetpassword/${token}`
         };
 
-        transporter.sendMail(mailOptions, function (error) {
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
-                console.error("Error sending email:", error);
-                return res.status(500).json({ status: false, message: "Gagal mengirim email" });
+                return res.json({ message: "Error sending email" });
             } else {
-                console.log("Email sent to:", email);
-                return res.status(200).json({ status: true, message: "Email terkirim" });
+                return res.json({ status: true, message: "Email sent" });
             }
         });
-    } catch (error) {
-        console.error("Error during reset password process:", error);
-        return res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    } catch (err) {
+        console.log(err);
     }
 });
 
-router.post("/reset-password", validateResetPassword, async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
+router.post('/resetpassword', async (req, res) => {
     const { password, token } = req.body;
 
     try {
@@ -208,11 +192,11 @@ router.post("/reset-password", validateResetPassword, async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: "User tidak ditemukan" });
+            return res.status(404).json({ message: "User not found" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
+        const hashpassword = await bcrypt.hash(password, 10);
+        user.password = hashpassword;
         await user.save();
 
         return res.json({ status: true, message: "Password berhasil diubah" });
@@ -221,6 +205,7 @@ router.post("/reset-password", validateResetPassword, async (req, res) => {
         return res.status(500).json({ message: "Terjadi kesalahan pada server" });
     }
 });
+
 
 router.get('/logout', (req, res) => {
     res.clearCookie('token');
