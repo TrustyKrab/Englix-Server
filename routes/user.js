@@ -149,7 +149,7 @@ router.post('/submitresult', async (req, res) => {
 })
 
 
-router.post("/forgot-password", async (req, res) => {
+router.post("/forgot-password", validateForgotPassword, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -180,7 +180,7 @@ router.post("/forgot-password", async (req, res) => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: "Reset Password",
-            text: `https://englix-client.vercel.app/user/reset-password/${token}`,
+            text: `https://kidslearn-client.vercel.app/reset-password/${token}`,
         };
 
         transporter.sendMail(mailOptions, function (error) {
@@ -198,6 +198,34 @@ router.post("/forgot-password", async (req, res) => {
         });
     } catch (error) {
         console.error("Error during reset password process:", error);
+        return res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+});
+
+router.post("/reset-password", validateResetPassword, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { password, token } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.KEY);
+        const userId = decoded.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User tidak ditemukan" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.json({ status: true, message: "Password berhasil diubah" });
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({ message: "Terjadi kesalahan pada server" });
     }
 });
