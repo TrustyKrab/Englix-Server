@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer'
 import cors from 'cors';
 import express from 'express';
+export { router as UserRouter };
+
 
 
 const app = express();
@@ -236,5 +238,3 @@ router.get('/logout', (req, res) => {
     res.clearCookie('token')
     return res.json({ status: true })
 })
-
-export { router as UserRouter };
