@@ -183,6 +183,71 @@ router.post('/submitresult', async (req, res) => {
 //     }
 // });
 
+
+
+router.post('/forgotpassword', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({status: false, message: "Akun tidak ditemukan" });
+        }
+        
+
+        const token = jwt.sign({ id: user._id }, process.env.KEY, { expiresIn: '10m' });
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        var mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Reset Password',
+            text: `https://englix-client.vercel.app/resetpassword/${token}`
+        };
+
+        transporter.sendMail(mailOptions, function(error, info) {
+            if (error) {
+                return res.json({ message: "Error sending email" });
+            } else {
+                return res.json({ status: true, message: "Email sent" });
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+
+router.post('/resetpassword', async (req, res) => {
+    const { password, token } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.KEY);
+        const userId = decoded.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const hashpassword = await bcrypt.hash(password, 10);
+        user.password = hashpassword;
+        await user.save();
+
+        return res.json({status : true, message: "Password berhasil diubah" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+
+
+
 // router.post('/resetpassword', async (req, res) => {
 //     const { password, token } = req.body;
 
